@@ -22,10 +22,10 @@
     var ctx = c.getContext("2d");
 
     var first_line = {
-        x: 200,
+        x: 100,
         y: 100,
         theta: 0, // radians
-        radius: 90,
+        radius: 30,
         angular_vel: 0
     };
 
@@ -48,7 +48,13 @@
     };
 
     var get_line_angular_acceleration = function(line, force, mom_inertia) {
-        return force * line.radius * Math.cos(line.theta) / mom_inertia;
+        // due to mass
+        var t1 = force * line.radius * Math.cos(line.theta);
+        // due to ramp
+        var ramp_force = 1; // TODO do something here
+        var t2 = 4;
+        // var t2 = ramp_force * line.radius * Math.cos(-3.0/4 * Math.PI);
+        return (t1 + t2) / mom_inertia;
     }
 
     var clear_canvas = function() {
