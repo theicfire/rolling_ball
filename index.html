@@ -36,7 +36,6 @@
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-
     }
 
     var draw_wheel = function(wheel) {
@@ -47,6 +46,12 @@
         draw_circle(x2, y2, MASS_RADIUS);
 
         draw_circle(wheel.x, wheel.y, wheel.radius);
+    };
+
+    var draw_ramp = function(ramp) {
+        draw_line(ramp.x, ramp.y,
+                ramp.x + Math.cos(ramp.theta) * ramp.length,
+                ramp.y + Math.sin(ramp.theta) * ramp.length);
     };
 
     var get_wheel_angular_acceleration = function(wheel, ramp_theta) {
@@ -76,20 +81,28 @@
     };
     first_wheel.mom_inertia = get_mom_inertia(first_wheel);
 
+    var ramp = {
+        theta: Math.PI / 12.0, // lower is flatter
+        x: 100,
+        y: 130,
+        length: 900
+    };
+
+
     var FRAME_TIME_DELTA = .03; // in s
-    var ramp_theta = Math.PI / 12.0; // lower is flatter
 
     var next_frame = function() {
-        var alpha = get_wheel_angular_acceleration(first_wheel, ramp_theta);
+        var alpha = get_wheel_angular_acceleration(first_wheel, ramp.theta);
         first_wheel.angular_vel = first_wheel.angular_vel + alpha * FRAME_TIME_DELTA;
         var theta_change = first_wheel.angular_vel * FRAME_TIME_DELTA;
         first_wheel.theta = first_wheel.theta + theta_change;
 
-        first_wheel.x = first_wheel.x + (first_wheel.radius * theta_change) * Math.cos(ramp_theta);
-        first_wheel.y = first_wheel.y + (first_wheel.radius * theta_change) * Math.sin(ramp_theta);
+        first_wheel.x = first_wheel.x + (first_wheel.radius * theta_change) * Math.cos(ramp.theta);
+        first_wheel.y = first_wheel.y + (first_wheel.radius * theta_change) * Math.sin(ramp.theta);
 
         clear_canvas();
         draw_wheel(first_wheel);
+        draw_ramp(ramp);
     }
 
     setInterval(next_frame, FRAME_TIME_DELTA * 1000); // just for now
