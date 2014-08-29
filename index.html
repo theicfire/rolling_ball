@@ -56,9 +56,11 @@
     var draw_line = function(line) {
         ctx.beginPath();
         ctx.moveTo(line.x1, line.y1);
-        ctx.lineTo(line.x1 + line.radius * Math.cos(line.theta),
-                line.y1 + line.radius * Math.sin(line.theta));
+        var x2 = line.x1 + line.radius * Math.cos(line.theta);
+        var y2 = line.y1 + line.radius * Math.sin(line.theta);
+        ctx.lineTo(x2, y2);
         ctx.stroke();
+        draw_circle(x2, y2, 5);
     };
 
     var get_line_angular_acceleration = function(line, force, mom_inertia) {
@@ -84,7 +86,6 @@
         first_line.theta = first_line.theta + first_line.angular_vel * FRAME_TIME_DELTA;
 
         clear_canvas();
-        draw_circle(x, y, 5);
         draw_line(first_line);
     }
 
