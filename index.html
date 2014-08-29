@@ -39,18 +39,31 @@
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
+    var first_line = {
+        x1: 200,
+        y1: 100,
+        theta: 0, // radians
+        radius: 90,
+        angular_vel: 0
+    };
+
     var draw_circle = function(x, y, r) {
         ctx.beginPath();
         ctx.arc(x, y, r,0,2*Math.PI);
         ctx.stroke();
     };
 
-    var draw_line = function(x1, y1, x2, y2) {
+    var draw_line = function(line) {
         ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
+        ctx.moveTo(line.x1, line.y1);
+        ctx.lineTo(line.x1 + line.radius * Math.cos(line.theta),
+                line.y1 + line.radius * Math.sin(line.theta));
         ctx.stroke();
     };
+
+    var get_line_angular_acceleration = function(line, force, mom_inertia) {
+        return force * line.radius * Math.cos(line.theta) / mom_inertia;
+    }
 
     var clear_canvas = function() {
         ctx.clearRect (0, 0, 800, 400);
@@ -61,14 +74,18 @@
     var y = 100;
     var accel = 400; // pixels per second^2
     var vel = 0; // pixels per second
-    
+
     var next_frame = function() {
         y = y + vel * FRAME_TIME_DELTA; // just falling down
         vel = vel + accel * FRAME_TIME_DELTA;
 
+        alpha = get_line_angular_acceleration(first_line, .2, 1);
+        first_line.angular_vel = first_line.angular_vel + alpha * FRAME_TIME_DELTA;
+        first_line.theta = first_line.theta + first_line.angular_vel * FRAME_TIME_DELTA;
+
         clear_canvas();
         draw_circle(x, y, 5);
-        draw_line(10, 100, 100, 100);
+        draw_line(first_line);
     }
 
     setInterval(next_frame, FRAME_TIME_DELTA * 1000); // just for now
