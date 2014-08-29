@@ -54,15 +54,8 @@
     };
 
     var FRAME_TIME_DELTA = .03; // in s
-    var x = 100;
-    var y = 100;
-    var accel = 400; // pixels per second^2
-    var vel = 0; // pixels per second
 
     var next_frame = function() {
-        y = y + vel * FRAME_TIME_DELTA; // just falling down
-        vel = vel + accel * FRAME_TIME_DELTA;
-
         alpha = get_line_angular_acceleration(first_line, .2, 1);
         first_line.angular_vel = first_line.angular_vel + alpha * FRAME_TIME_DELTA;
         first_line.theta = first_line.theta + first_line.angular_vel * FRAME_TIME_DELTA;
