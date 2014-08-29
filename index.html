@@ -22,8 +22,8 @@
     var ctx = c.getContext("2d");
 
     var first_line = {
-        x1: 200,
-        y1: 100,
+        x: 200,
+        y: 100,
         theta: 0, // radians
         radius: 90,
         angular_vel: 0
@@ -37,9 +37,9 @@
 
     var draw_line = function(line) {
         ctx.beginPath();
-        ctx.moveTo(line.x1, line.y1);
-        var x2 = line.x1 + line.radius * Math.cos(line.theta);
-        var y2 = line.y1 + line.radius * Math.sin(line.theta);
+        ctx.moveTo(line.x, line.y);
+        var x2 = line.x + line.radius * Math.cos(line.theta);
+        var y2 = line.y + line.radius * Math.sin(line.theta);
         ctx.lineTo(x2, y2);
         ctx.stroke();
         draw_circle(x2, y2, 5);
