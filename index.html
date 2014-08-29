@@ -16,11 +16,9 @@
 <canvas id="myCanvas" width="800" height="400"></canvas>
 <script type="text/javascript">
 (function() {
-
-    console.log('start');
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
-    var GRAVITY = 9.8;
+    var GRAVITY = 190;
 
 
     var get_mom_inertia = function(wheel) {
@@ -45,16 +43,15 @@
         draw_circle(wheel.x, wheel.y, wheel.radius);
     };
 
-    var get_wheel_angular_acceleration = function(wheel, mom_inertia) {
+    var get_wheel_angular_acceleration = function(wheel, ramp_theta) {
         // due to mass
         var force = wheel.first_mass * GRAVITY;
         var t1 = force * wheel.radius * Math.cos(wheel.theta);
 
         // due to ramp
-        var ramp_force = 1; // TODO do something here
-        var t2 = 8;
-        // var t2 = ramp_force * wheel.radius * Math.cos(-3.0/4 * Math.PI);
-        return (t1 + t2) / mom_inertia;
+        var ramp_force = wheel.total_mass * GRAVITY * Math.sin(ramp_theta);
+        var t2 = ramp_force * wheel.radius;
+        return (t1 + t2) / wheel.mom_inertia;
     }
 
     var clear_canvas = function() {
@@ -74,16 +71,16 @@
     first_wheel.mom_inertia = get_mom_inertia(first_wheel);
 
     var FRAME_TIME_DELTA = .03; // in s
-    var ramp_angle = Math.PI / 8.0; // lower is flatter
+    var ramp_theta = Math.PI / 12.0; // lower is flatter
 
     var next_frame = function() {
-        var alpha = get_wheel_angular_acceleration(first_wheel, 1);
+        var alpha = get_wheel_angular_acceleration(first_wheel, ramp_theta);
         first_wheel.angular_vel = first_wheel.angular_vel + alpha * FRAME_TIME_DELTA;
         var theta_change = first_wheel.angular_vel * FRAME_TIME_DELTA;
         first_wheel.theta = first_wheel.theta + theta_change;
 
-        first_wheel.x = first_wheel.x + (first_wheel.radius * theta_change) * Math.cos(ramp_angle);
-        first_wheel.y = first_wheel.y + (first_wheel.radius * theta_change) * Math.sin(ramp_angle);
+        first_wheel.x = first_wheel.x + (first_wheel.radius * theta_change) * Math.cos(ramp_theta);
+        first_wheel.y = first_wheel.y + (first_wheel.radius * theta_change) * Math.sin(ramp_theta);
 
         clear_canvas();
         draw_wheel(first_wheel);
