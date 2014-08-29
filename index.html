@@ -21,7 +21,7 @@
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
-    var first_line = {
+    var first_wheel = {
         x: 100,
         y: 100,
         theta: 0, // radians
@@ -35,25 +35,25 @@
         ctx.stroke();
     };
 
-    var draw_line = function(line) {
+    var draw_wheel = function(wheel) {
         ctx.beginPath();
-        ctx.moveTo(line.x, line.y);
-        var x2 = line.x + line.radius * Math.cos(line.theta);
-        var y2 = line.y + line.radius * Math.sin(line.theta);
+        ctx.moveTo(wheel.x, wheel.y);
+        var x2 = wheel.x + wheel.radius * Math.cos(wheel.theta);
+        var y2 = wheel.y + wheel.radius * Math.sin(wheel.theta);
         ctx.lineTo(x2, y2);
         ctx.stroke();
         draw_circle(x2, y2, 5);
 
-        draw_circle(line.x, line.y, line.radius);
+        draw_circle(wheel.x, wheel.y, wheel.radius);
     };
 
-    var get_line_angular_acceleration = function(line, force, mom_inertia) {
+    var get_wheel_angular_acceleration = function(wheel, force, mom_inertia) {
         // due to mass
-        var t1 = force * line.radius * Math.cos(line.theta);
+        var t1 = force * wheel.radius * Math.cos(wheel.theta);
         // due to ramp
         var ramp_force = 1; // TODO do something here
         var t2 = 2;
-        // var t2 = ramp_force * line.radius * Math.cos(-3.0/4 * Math.PI);
+        // var t2 = ramp_force * wheel.radius * Math.cos(-3.0/4 * Math.PI);
         return (t1 + t2) / mom_inertia;
     }
 
@@ -65,16 +65,16 @@
     var ramp_angle = Math.PI / 8.0; // lower is flatter
 
     var next_frame = function() {
-        var alpha = get_line_angular_acceleration(first_line, .2, 1);
-        first_line.angular_vel = first_line.angular_vel + alpha * FRAME_TIME_DELTA;
-        var theta_change = first_line.angular_vel * FRAME_TIME_DELTA;
-        first_line.theta = first_line.theta + theta_change;
+        var alpha = get_wheel_angular_acceleration(first_wheel, .2, 1);
+        first_wheel.angular_vel = first_wheel.angular_vel + alpha * FRAME_TIME_DELTA;
+        var theta_change = first_wheel.angular_vel * FRAME_TIME_DELTA;
+        first_wheel.theta = first_wheel.theta + theta_change;
 
-        first_line.x = first_line.x + (first_line.radius * theta_change) * Math.cos(ramp_angle);
-        first_line.y = first_line.y + (first_line.radius * theta_change) * Math.sin(ramp_angle);
+        first_wheel.x = first_wheel.x + (first_wheel.radius * theta_change) * Math.cos(ramp_angle);
+        first_wheel.y = first_wheel.y + (first_wheel.radius * theta_change) * Math.sin(ramp_angle);
 
         clear_canvas();
-        draw_line(first_line);
+        draw_wheel(first_wheel);
     }
 
     setInterval(next_frame, FRAME_TIME_DELTA * 1000); // just for now
