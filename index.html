@@ -20,14 +20,12 @@
     console.log('start');
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
+    var GRAVITY = 9.8;
 
-    var first_wheel = {
-        x: 100,
-        y: 100,
-        theta: 0, // radians
-        radius: 30,
-        angular_vel: 0
-    };
+
+    var get_mom_inertia = function(wheel) {
+        return wheel.first_mass * wheel.radius * wheel.radius;
+    }
 
     var draw_circle = function(x, y, r) {
         ctx.beginPath();
@@ -47,12 +45,14 @@
         draw_circle(wheel.x, wheel.y, wheel.radius);
     };
 
-    var get_wheel_angular_acceleration = function(wheel, force, mom_inertia) {
+    var get_wheel_angular_acceleration = function(wheel, mom_inertia) {
         // due to mass
+        var force = wheel.first_mass * GRAVITY;
         var t1 = force * wheel.radius * Math.cos(wheel.theta);
+
         // due to ramp
         var ramp_force = 1; // TODO do something here
-        var t2 = 2;
+        var t2 = 8;
         // var t2 = ramp_force * wheel.radius * Math.cos(-3.0/4 * Math.PI);
         return (t1 + t2) / mom_inertia;
     }
@@ -61,11 +61,23 @@
         ctx.clearRect (0, 0, 800, 400);
     };
 
+    var first_wheel = {
+        x: 100,
+        y: 100,
+        theta: 0, // radians
+        radius: 30,
+        angular_vel: 0,
+        first_mass: .1, // TODO get more general?
+        total_mass: .1,
+        mom_inertia: 0
+    };
+    first_wheel.mom_inertia = get_mom_inertia(first_wheel);
+
     var FRAME_TIME_DELTA = .03; // in s
     var ramp_angle = Math.PI / 8.0; // lower is flatter
 
     var next_frame = function() {
-        var alpha = get_wheel_angular_acceleration(first_wheel, .2, 1);
+        var alpha = get_wheel_angular_acceleration(first_wheel, 1);
         first_wheel.angular_vel = first_wheel.angular_vel + alpha * FRAME_TIME_DELTA;
         var theta_change = first_wheel.angular_vel * FRAME_TIME_DELTA;
         first_wheel.theta = first_wheel.theta + theta_change;
