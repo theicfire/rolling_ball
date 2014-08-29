@@ -19,6 +19,7 @@
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     var GRAVITY = 190;
+    var MASS_RADIUS = 5;
 
 
     var get_mom_inertia = function(wheel) {
@@ -31,14 +32,19 @@
         ctx.stroke();
     };
 
-    var draw_wheel = function(wheel) {
-        ctx.beginPath();
-        ctx.moveTo(wheel.x, wheel.y);
-        var x2 = wheel.x + wheel.radius * Math.cos(wheel.theta);
-        var y2 = wheel.y + wheel.radius * Math.sin(wheel.theta);
+    var draw_line = function(x1, y1, x2, y2) {
+        ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        draw_circle(x2, y2, 5);
+
+    }
+
+    var draw_wheel = function(wheel) {
+        ctx.beginPath();
+        var x2 = wheel.x + wheel.radius * Math.cos(wheel.theta);
+        var y2 = wheel.y + wheel.radius * Math.sin(wheel.theta);
+        draw_line(wheel.x, wheel.y, x2, y2);
+        draw_circle(x2, y2, MASS_RADIUS);
 
         draw_circle(wheel.x, wheel.y, wheel.radius);
     };
