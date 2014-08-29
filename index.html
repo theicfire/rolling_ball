@@ -15,6 +15,11 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 
 	<title>Title Goes Here</title>
+    <style>
+        canvas {
+            border: 1px solid;
+        }
+    </style>
 
 
 
@@ -24,7 +29,6 @@
 
 <body>
 <canvas id="myCanvas" width="800" height="400"></canvas>
-hello
 
 
 
@@ -40,7 +44,27 @@ hello
         ctx.arc(x, y, r,0,2*Math.PI);
         ctx.stroke();
     }
-    draw_circle(100, 100, 20);
+    var clear_canvas = function() {
+        ctx.clearRect (0, 0, 800, 400);
+    };
+
+    var FRAME_TIME_DELTA = .03; // in s
+    var x = 100;
+    var y = 100;
+    var accel = 400; // pixels per second^2
+    var vel = 0; // pixels per second
+    
+    var next_frame = function() {
+        y = y + vel * FRAME_TIME_DELTA; // just falling down
+        vel = vel + accel * FRAME_TIME_DELTA;
+
+        clear_canvas();
+        draw_circle(x, y, 20);
+    }
+
+    setInterval(next_frame, FRAME_TIME_DELTA * 1000); // just for now
+
+
     })();
 </script>
 </body>
