@@ -52,7 +52,7 @@
         var t1 = force * line.radius * Math.cos(line.theta);
         // due to ramp
         var ramp_force = 1; // TODO do something here
-        var t2 = 4;
+        var t2 = 2;
         // var t2 = ramp_force * line.radius * Math.cos(-3.0/4 * Math.PI);
         return (t1 + t2) / mom_inertia;
     }
@@ -62,14 +62,16 @@
     };
 
     var FRAME_TIME_DELTA = .03; // in s
+    var ramp_angle = Math.PI / 8.0; // lower is flatter
 
     var next_frame = function() {
-        alpha = get_line_angular_acceleration(first_line, .2, 1);
+        var alpha = get_line_angular_acceleration(first_line, .2, 1);
         first_line.angular_vel = first_line.angular_vel + alpha * FRAME_TIME_DELTA;
         var theta_change = first_line.angular_vel * FRAME_TIME_DELTA;
         first_line.theta = first_line.theta + theta_change;
 
-        first_line.x = first_line.x + first_line.radius * theta_change;
+        first_line.x = first_line.x + (first_line.radius * theta_change) * Math.cos(ramp_angle);
+        first_line.y = first_line.y + (first_line.radius * theta_change) * Math.sin(ramp_angle);
 
         clear_canvas();
         draw_line(first_line);
